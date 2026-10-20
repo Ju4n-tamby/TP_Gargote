@@ -38,8 +38,7 @@ export const api = {
   },
 
   plats: {
-    lister: (idCategorie) =>
-      requete('GET', idCategorie ? `/plats?categorie=${idCategorie}` : '/plats'),
+    lister: (idCategorie) => requete('GET', idCategorie ? `/plats?categorie=${idCategorie}` : '/plats'),
     creer: (plat) => requete('POST', '/plats', plat),
     modifier: (id, plat) => requete('PUT', `/plats/${id}`, plat),
     supprimer: (id) => requete('DELETE', `/plats/${id}`),

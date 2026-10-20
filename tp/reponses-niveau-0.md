@@ -51,3 +51,28 @@
 ```bash
 curl -i -X POST http://localhost:8080/api/commandes      -H "Content-Type: application/json"      -d '{"numero_table": 6, "lignes": [{"id_plat": 4, "quantite": 2}, {"id_plat": 10, "quantite": 1}]}'
 ```
+
+---
+
+## 0.4 Suivre une requête de bout en bout
+
+Quand on clique sur **Ajouter le plat**, voici le chemin parcouru. Complétez le tableau en indiquant, pour chaque étape, **le fichier et le nom de la fonction** :
+
+| # | Étape | Fichier | Fonction / ligne |
+|---|---|---|---|
+| 1 | Le formulaire est soumis | `components/PlatForm.vue` | `enregistrer()` |
+| 2 | La requête HTTP est construite | `src/api.js` | `requete()` |
+| 3 | Vite transmet `/api/...` au port 8080 | `frontend/vite.config.js` | `server.proxy['/api']` |
+| 4 | CodeIgniter choisit le contrôleur | `backend/app/Config/Routes.php` | route `POST plats` → `Plats::create()` |
+| 5 | Le contrôleur lit le JSON | `backend/app/Controllers/Api/ApiController.php` | `donneesJson()` |
+| 6 | Les règles de validation sont vérifiées | `backend/app/Models/PlatModel.php` | `$validationRules`, lors de `insert()` |
+| 7 | La ligne est insérée | `backend/app/Controllers/Api/Plats.php` | `create()` → `$this->plats->insert()` |
+| 8 | Le formulaire prévient l’écran parent | `frontend/src/components/PlatForm.vue` | `emit('enregistre', resultat)` |
+| 9 | L’écran recharge la liste | `frontend/src/views/CarteView.vue` | `surEnregistrement()` → `charger()` |
+
+8. Où est le code métier de la création d’une commande ? Pourquoi n’est-il pas dans le contrôleur `Commandes.php` ?
+
+> Le code métier se trouve dans `backend/app/Services/CommandeService.php`, dans la méthode
+`creer()`. Le contrôleur `Commandes.php` reçoit la requête et renvoie la réponse HTTP ;
+le service centralise les règles métier et la transaction, ce qui évite de mélanger les
+responsabilités et permet de réutiliser et de tester ces règles indépendamment de HTTP.
