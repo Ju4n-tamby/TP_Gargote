@@ -26,6 +26,28 @@
 2. Une quantité négative pour une ligne de commande (par exemple, `-2`).
 3. Un numéro de table nul ou négatif (par exemple, `0` ou `-1`).
 
+---
+
+## 0.3 Interroger l’API à la main
+
+5. Pour la requête b, quel code obtenez-vous ? Pourquoi pas 200 ?
+
+> Pour la requete b, j(obtient un code 201 Created car la requête POST a été utilisée pour créer un nouveau plat. Le code 201 indique que la ressource a été créée avec succès, tandis que le code 200 est généralement utilisé pour les requêtes GET ou PUT qui ne créent pas de nouvelles ressources.
+
+6. Pour la requête d, qui bloque la suppression : PHP ou PostgreSQL ? Montrez la ligne de code qui transforme ce blocage en réponse 409.
+
+> Pour la requête d, c'est PostgreSQL qui bloque la suppression en raison de la contrainte de clé étrangère. La ligne de code qui transforme ce blocage en réponse 409 se trouve dans le contrôleur PHP Plats.php :
+```php
+        try {
+            $this->plats->delete($id);
+        } catch (\Throwable $e) {
+            // Le plat apparaît dans des commandes : la clé étrangère bloque la suppression.
+            return $this->erreur('Ce plat figure déjà dans des commandes, il ne peut pas être supprimé.', 409);
+        }
 ```
 
+7. Créez une commande avec curl (table 6, deux Romazava et un Café). Écrivez la commande curl complète.
 
+```bash
+curl -i -X POST http://localhost:8080/api/commandes      -H "Content-Type: application/json"      -d '{"numero_table": 6, "lignes": [{"id_plat": 4, "quantite": 2}, {"id_plat": 10, "quantite": 1}]}'
+```
