@@ -56,8 +56,6 @@ curl -i -X POST http://localhost:8080/api/commandes      -H "Content-Type: appli
 
 ## 0.4 Suivre une requête de bout en bout
 
-Quand on clique sur **Ajouter le plat**, voici le chemin parcouru. Complétez le tableau en indiquant, pour chaque étape, **le fichier et le nom de la fonction** :
-
 | # | Étape | Fichier | Fonction / ligne |
 |---|---|---|---|
 | 1 | Le formulaire est soumis | `components/PlatForm.vue` | `enregistrer()` |
@@ -76,3 +74,28 @@ Quand on clique sur **Ajouter le plat**, voici le chemin parcouru. Complétez le
 `creer()`. Le contrôleur `Commandes.php` reçoit la requête et renvoie la réponse HTTP ;
 le service centralise les règles métier et la transaction, ce qui évite de mélanger les
 responsabilités et permet de réutiliser et de tester ces règles indépendamment de HTTP.
+
+---
+
+## 0.5 Repérer les notions de Vue
+
+| Notion                 | À quoi ça sert                                                    | Votre exemple                                                                                                                                                                                                                            |
+|------------------------|-------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `ref()`                | une variable dont le changement met l’écran à jour                | frontend/src/views/CommandeView.vue:7-17<br/> const plats = ref([]) et const numeroTable = ref('') : ce sont des variables réactives, donc tout changement les met automatiquement à jour dans l’écran.                                  |
+| `computed()`           | une valeur calculée à partir d’autres, recalculée automatiquement | frontend/src/App.vue:14-15<br/>const vueCourante = computed(() => onglets.find((o) => o.id === ongletActif.value).composant) : c’est une valeur calculée à partir d’autres données, recalculée automatiquement quand celles-ci changent. |
+| `v-for`                | répéter un élément pour chaque élément d’une liste                | frontend/src/App.vue:26-3<br/><button v-for="onglet in onglets" ...> : Vue répète le bloc pour chaque élément de la liste onglets.                                                                                                       |
+| `v-if` / `v-else`      | afficher un élément seulement si une condition est vraie          | frontend/src/views/HistoriqueView.vue:23-49<br/> l’élément s’affiche seulement si la condition est vraie, sinon on affiche l’autre.                                                                                                      |
+| `v-model`              | lier un champ de formulaire à une variable, dans les deux sens    | frontend/src/views/CommandeView.vue:72-75<br/> <input v-model.number="numeroTable" ... /> : le champ de formulaire et la variable numeroTable sont liés dans les deux sens.                                                              |
+| `defineProps`          | recevoir des données du composant parent                          | frontend/src/components/PlatList.vue:6-8<br/> const props = defineProps({ plats: { type: Array, required: true } }) : le composant reçoit des données du parent via les props.                                                           |
+| `defineEmits` / `emit` | envoyer un événement au composant parent                          | frontend/src/components/PlatList.vue:10-11 et 28-29<br/> const emit = defineEmits(['modifier', 'supprimer']) puis @click="emit('modifier', plat)" : le composant envoie un événement au parent pour lui demander une action.             |
+| `onMounted`            | exécuter du code quand le composant apparaît                      | frontend/src/views/HistoriqueView.vue:10-12<br/> onMounted(async () => { commandes.value = await api.commandes.lister() }) : le code s’exécute quand le composant est affiché pour la première fois.                                     |
+
+9. Panier.vue ne modifie jamais la quantité lui-même : il émet plus et moins. Pourquoi ce choix ? Qui modifie réellement la quantité ?
+
+> Panier.vue émet les événements `plus` et `moins` pour déléguer la modification de la quantité au composant parent, qui est responsable de gérer l'état global de la commande. Cela permet de centraliser la logique de gestion des quantités et d'assurer que toutes les modifications passent par le même point, facilitant ainsi le suivi et la cohérence des données. La quantité est réellement modifiée par le composant parent, qui écoute ces événements et met à jour l'état de la commande en conséquence.
+
+10. Dans PlatForm.vue, à quoi sert le watch ? Que se passerait-il sans lui quand on clique sur Modifier d’un autre plat ?
+
+> Le `watch` dans PlatForm.vue sert à surveiller les changements de la prop `plat` et à mettre à jour les champs du formulaire en conséquence. Sans ce `watch`, si l'utilisateur clique sur "Modifier" pour un autre plat, les champs du formulaire ne se mettraient pas à jour avec les nouvelles données du plat sélectionné, et l'utilisateur verrait toujours les informations du plat précédent, ce qui pourrait entraîner des erreurs lors de la modification.
+
+---
