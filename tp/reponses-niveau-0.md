@@ -99,3 +99,12 @@ responsabilités et permet de réutiliser et de tester ces règles indépendamme
 > Le `watch` dans PlatForm.vue sert à surveiller les changements de la prop `plat` et à mettre à jour les champs du formulaire en conséquence. Sans ce `watch`, si l'utilisateur clique sur "Modifier" pour un autre plat, les champs du formulaire ne se mettraient pas à jour avec les nouvelles données du plat sélectionné, et l'utilisateur verrait toujours les informations du plat précédent, ce qui pourrait entraîner des erreurs lors de la modification.
 
 ---
+
+## 0.6 Premières modifications
+
+11. La catégorie apparaît dans la liste déroulante du formulaire sans que vous ayez écrit de code. Expliquez pourquoi, en citant la route et le composant concernés.
+
+> La catégorie apparaît dans la liste déroulante du formulaire grâce à la route `/api/categories` définie dans `backend/app/Config/Routes.php`, qui est gérée par le contrôleur `Categories.php`. Le composant `PlatForm.vue` utilise cette route pour récupérer les catégories via une requête HTTP et les afficher dans la liste déroulante. Le code dans `PlatForm.vue` appelle l'API pour obtenir les catégories et les stocke dans une variable réactive, ce qui permet à Vue de mettre à jour automatiquement l'affichage de la liste déroulante lorsque les données sont reçues.
+
+
+---

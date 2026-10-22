@@ -19,7 +19,7 @@ const vueCourante = computed(() => onglets.find((o) => o.id === ongletActif.valu
   <header class="entete">
     <div class="enseigne">
       <span class="enseigne-nom">Gargote</span>
-      <span class="enseigne-lieu">Chez Bao, Analakely</span>
+      <span class="enseigne-lieu">L’Atelier de Juan</span>
     </div>
 
     <nav class="onglets">
